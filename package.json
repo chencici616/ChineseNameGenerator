@@ -1,0 +1,24 @@
+{
+  "name": "chinese-name-generator",
+  "version": "0.1.0",
+  "description": "基于AI的中文名字生成工具，能够根据英文名智能生成具有文化内涵的中文名字",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "chinese",
+    "name",
+    "generator",
+    "ai"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

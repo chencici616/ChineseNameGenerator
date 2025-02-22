@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- 设置页面编码和响应式视口 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chinese Name Generator | 中文名字生成器</title>
+    <!-- 引入谷歌思源宋体字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* 定义全局颜色变量 */
+        :root {
+            --chinese-red: #c41e3a;  /* 中国红 */
+            --gold: #d4af37;         /* 金色 */
+            --ink: #2c3e50;          /* 墨色 */
+            --paper: #f9f6f0;        /* 宣纸色 */
+            --jade: #00a86b;         /* 玉色 */
+        }
+
+        /* 页面整体样式 */
+        body {
+            font-family: 'Noto Serif SC', 'Times New Roman', serif;  /* 使用思源宋体作为主字体 */
+            background-color: var(--paper);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            /* 添加福字背景图案 */
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="50" y="50" font-size="50" text-anchor="middle" dy=".35em" fill="%23f0e6d2" opacity="0.2">福</text></svg>');
+            background-size: 100px 100px;
+        }
+
+        /* 主容器样式 */
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            margin: 20px;
+        }
+
+        /* 容器顶部的装饰条 */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, var(--chinese-red), var(--gold));
+        }
+
+        /* 标题样式 */
+        h1 {
+            color: var(--chinese-red);
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            font-weight: 700;
+            position: relative;
+        }
+
+        /* 标题中的中文副标题 */
+        h1 span {
+            display: block;
+            font-size: 0.5em;
+            color: var(--ink);
+            margin-top: 5px;
+            font-weight: 400;
+        }
+
+        /* 输入区域样式 */
+        .input-section {
+            text-align: center;
+            margin: 0 auto;
+            max-width: 600px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        /* 输入框样式 */
+        input[type="text"], textarea {
+            width: 100%;
+            max-width: 400px;
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+        }
+
+        /* 输入框焦点状态 */
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: var(--chinese-red);
+            box-shadow: 0 0 10px rgba(196, 30, 58, 0.2);
+        }
+
+        /* 性别选择区域样式 */
+        .gender-selection {
+            margin-bottom: 20px;
+        }
+
+        .gender-selection label {
+            display: inline-block;
+            margin: 0 15px;
+            cursor: pointer;
+        }
+
+        .gender-selection input[type="radio"] {
+            margin-right: 5px;
+        }
+
+        .gender-selection span {
+            color: var(--ink);
+        }
+
+        /* 要求输入框样式 */
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        /* 输入框焦点状态 */
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--chinese-red);
+            box-shadow: 0 0 10px rgba(196, 30, 58, 0.2);
+        }
+
+        /* 按钮样式 */
+        button {
+            background-color: var(--chinese-red);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 按钮悬停效果 */
+        button:hover {
+            background-color: #a01830;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(196, 30, 58, 0.3);
+        }
+
+        /* 结果区域样式 */
+        .results {
+            display: none;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .results[style*="display: block"] {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--gold);
+        }
+
+        /* 名字卡片样式 */
+        .name-card {
+            background-color: white;
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* 名字卡片悬停效果 */
+        .name-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2);
+        }
+
+        /* 中文名字样式 */
+        .chinese-name {
+            font-size: 32px;
+            color: var(--chinese-red);
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        /* 名字含义说明样式 */
+        .meaning {
+            color: var(--ink);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .meaning p {
+            margin: 10px 0;
+        }
+
+        /* 加载提示样式 */
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 30px 0;
+            color: var(--ink);
+            font-size: 18px;
+        }
+
+        /* 加载动画效果 */
+        .loading::after {
+            content: "Generating...";
+            animation: dots 1.5s infinite;
+        }
+
+        /* 加载动画关键帧 */
+        @keyframes dots {
+            0%, 20% { content: "Generating"; }
+            40% { content: "Generating."; }
+            60% { content: "Generating.."; }
+            80% { content: "Generating..."; }
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            input[type="text"] {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- 页面标题 -->
+        <h1>
+            Chinese Name Generator
+            <span>中文名字生成器</span>
+        </h1>
+        <!-- 输入区域 -->
+        <div class="input-section">
+            <input type="text" id="englishName" placeholder="Enter your English name" required>
+            <div class="gender-selection">
+                <label>
+                    <input type="radio" name="gender" value="male" checked>
+                    <span>男 Male</span>
+                </label>
+                <label>
+                    <input type="radio" name="gender" value="female">
+                    <span>女 Female</span>
+                </label>
+            </div>
+            <textarea id="requirements" placeholder="Enter your requirements for the name (e.g., strong, elegant, etc.)" rows="3"></textarea>
+            <button onclick="generateNames()">Generate Names</button>
+        </div>
+        <!-- 加载提示 -->
+        <div class="loading" id="loading"></div>
+        <!-- 结果显示区域 -->
+        <div class="results" id="results"></div>
+    </div>
+    <!-- 引入JavaScript文件 -->
+    <script src="app.js"></script>
+</body>
+</html>
